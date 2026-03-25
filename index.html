@@ -14,6 +14,7 @@
             --text-dark: #2b2b2b;
             --text-light: #6c757d;
             --white: #ffffff;
+            --success-green: #2e7d32;
             --shadow-sm: 0 4px 6px rgba(0,0,0,0.05);
             --shadow-md: 0 10px 30px rgba(0,0,0,0.08);
             --shadow-hover: 0 20px 40px rgba(199, 29, 35, 0.15);
@@ -83,14 +84,14 @@
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); backdrop-filter: blur(8px); z-index: 200; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: var(--transition); }
         .modal-overlay.active { opacity: 1; visibility: visible; }
         
-        .modal-box { background: var(--white); width: 100%; max-width: 500px; border-radius: 20px; padding: 40px; box-shadow: 0 25px 50px rgba(0,0,0,0.2); transform: translateY(30px) scale(0.95); transition: var(--transition); position: relative; }
+        .modal-box { background: var(--white); width: 100%; max-width: 500px; border-radius: 20px; padding: 40px; box-shadow: 0 25px 50px rgba(0,0,0,0.2); transform: translateY(30px) scale(0.95); transition: var(--transition); position: relative; overflow: hidden; }
         .modal-overlay.active .modal-box { transform: translateY(0) scale(1); }
         
-        .close-modal { position: absolute; top: 20px; right: 20px; background: none; border: none; font-size: 24px; color: #aaa; cursor: pointer; transition: 0.2s; }
+        .close-modal { position: absolute; top: 20px; right: 20px; background: none; border: none; font-size: 24px; color: #aaa; cursor: pointer; transition: 0.2s; z-index: 10; }
         .close-modal:hover { color: var(--andra-red); transform: rotate(90deg); }
 
-        .modal-box h3 { font-size: 24px; color: var(--andra-dark-red); margin-bottom: 10px; }
-        .modal-box p { color: var(--text-light); font-size: 14px; margin-bottom: 25px; }
+        .modal-header h3 { font-size: 24px; color: var(--andra-dark-red); margin-bottom: 10px; }
+        .modal-header p { color: var(--text-light); font-size: 14px; margin-bottom: 25px; }
         
         .form-group { margin-bottom: 20px; }
         .form-group label { display: block; font-size: 13px; font-weight: 600; color: var(--text-dark); margin-bottom: 8px; }
@@ -100,6 +101,12 @@
         .btn-submit { width: 100%; background: var(--andra-red); color: var(--white); padding: 16px; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; }
         .btn-submit:hover { background: var(--andra-dark-red); }
         .btn-submit:disabled { background: #ccc; cursor: not-allowed; }
+
+        /* SUCCESS MESSAGE UI */
+        #success-message { display: none; text-align: center; padding: 20px 0; animation: fadeInDown 0.5s ease; }
+        #success-message i { font-size: 60px; color: var(--success-green); margin-bottom: 20px; }
+        #success-message h3 { color: var(--success-green); font-size: 24px; margin-bottom: 15px; }
+        #success-message p { color: var(--text-light); font-size: 15px; line-height: 1.6; margin-bottom: 25px; }
 
         /* ANIMATIONS */
         @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
@@ -123,11 +130,6 @@
 
         <div id="view-categories" class="view-section">
             <div class="category-grid">
-                <div class="cat-card" onclick="openCategory('rastreio')">
-                    <i class="fa-solid fa-magnifying-glass-location cat-icon"></i>
-                    <h3 class="cat-title">Consultar Pedido</h3>
-                    <p class="cat-desc">Acompanhe o status e rastreie sua entrega.</p>
-                </div>
                 <div class="cat-card" onclick="openCategory('entrega')">
                     <i class="fa-solid fa-truck-fast cat-icon"></i>
                     <h3 class="cat-title">Prazos e Entregas</h3>
@@ -175,47 +177,54 @@
     <div class="modal-overlay" id="contact-modal">
         <div class="modal-box">
             <button class="close-modal" onclick="toggleModal(false)"><i class="fa-solid fa-xmark"></i></button>
-            <h3>Fale Conosco</h3>
-            <p>Preencha os dados abaixo e nossa equipe entrará em contato em breve.</p>
             
-            <form id="duvida-form" onsubmit="enviarDuvida(event)">
-                <div class="form-group">
-                    <label>Nome Completo</label>
-                    <input type="text" id="form-nome" required placeholder="Digite seu nome">
+            <div id="form-content">
+                <div class="modal-header">
+                    <h3>Fale Conosco</h3>
+                    <p>Preencha os dados abaixo e nossa equipe entrará em contato em breve.</p>
                 </div>
-                <div class="form-group">
-                    <label>E-mail</label>
-                    <input type="email" id="form-email" required placeholder="seu@email.com.br">
-                </div>
-                <div class="form-group">
-                    <label>Sua Dúvida</label>
-                    <textarea id="form-duvida" rows="4" required placeholder="Escreva como podemos te ajudar..."></textarea>
-                </div>
-                
-                <input type="hidden" name="_captcha" value="false">
-                <input type="hidden" name="_template" value="table">
-                
-                <button type="submit" class="btn-submit" id="btn-enviar">Enviar Mensagem</button>
-            </form>
+                <form id="duvida-form" onsubmit="enviarDuvida(event)">
+                    <div class="form-group">
+                        <label>Nome Completo</label>
+                        <input type="text" id="form-nome" required placeholder="Digite seu nome">
+                    </div>
+                    <div class="form-group">
+                        <label>Telefone / WhatsApp</label>
+                        <input type="tel" id="form-telefone" required placeholder="(11) 99999-9999">
+                    </div>
+                    <div class="form-group">
+                        <label>E-mail</label>
+                        <input type="email" id="form-email" required placeholder="seu@email.com.br">
+                    </div>
+                    <div class="form-group">
+                        <label>Sua Dúvida</label>
+                        <textarea id="form-duvida" rows="4" required placeholder="Escreva como podemos te ajudar..."></textarea>
+                    </div>
+                    
+                    <input type="hidden" name="_captcha" value="false">
+                    <input type="hidden" name="_template" value="table">
+                    
+                    <button type="submit" class="btn-submit" id="btn-enviar">Enviar Mensagem</button>
+                </form>
+            </div>
+
+            <div id="success-message">
+                <i class="fa-solid fa-circle-check"></i>
+                <h3>Mensagem Enviada!</h3>
+                <p>Recebemos sua dúvida com sucesso. Nossa equipe analisará seu caso e entrará em contato em breve através do e-mail ou telefone informado.</p>
+                <button class="btn-submit" onclick="toggleModal(false)" style="background: var(--success-green);">Entendi, fechar</button>
+            </div>
+
         </div>
     </div>
 
     <script>
         const faqData = {
-            'rastreio': {
-                title: 'Consultar Pedido',
-                icon: 'fa-magnifying-glass-location',
-                questions: [
-                    { 
-                        q: "Onde consultar o status do meu pedido?", 
-                        a: "Para consultar o status e rastrear a sua entrega, basta acessar o nosso portal em <a href='https://pedido.andra.com.br' target='_blank'>pedido.andra.com.br</a>. Para visualizar as informações, você só precisará informar o seu CPF/CNPJ e o e-mail utilizado no momento da compra." 
-                    }
-                ]
-            },
             'entrega': {
                 title: 'Prazos e Entregas',
                 icon: 'fa-truck-fast',
                 questions: [
+                    { q: "Onde consultar o status do meu pedido?", a: "Para consultar o status e rastrear a sua entrega, basta acessar o nosso portal em <a href='https://pedido.andra.com.br' target='_blank'>pedido.andra.com.br</a>. Para visualizar as informações, você só precisará informar o seu CPF/CNPJ e o e-mail utilizado no momento da compra." },
                     { q: "Quais são as formas de envio disponíveis?", a: "Entregamos em todo o território nacional por transportadoras contratadas, Correios (SEDEX e PAC), frota própria da ANDRA e motoboys. Você pode consultar as opções disponíveis para o seu CEP na página do produto ou no carrinho." },
                     { q: "A partir de quando começa a contar o meu prazo de entrega?", a: "O prazo de entrega do pedido só passa a ser considerado a partir da <strong>aprovação do pagamento</strong> pela instituição financeira, e não no momento da inclusão do pedido." },
                     { q: "Como funciona a promoção de Frete Grátis?", a: "Oferecemos FRETE GRÁTIS exclusivamente para compras <strong>acima de R$500,00</strong> com entrega destinada à cidade de <strong>São Paulo - SP</strong>." },
@@ -260,11 +269,9 @@
         function openCategory(catKey) {
             const cat = faqData[catKey];
             
-            // Set Titles and Icons
             document.querySelector('#active-category-title span').innerText = cat.title;
             document.getElementById('active-category-icon').className = `fa-solid ${cat.icon}`;
             
-            // Generate HTML for questions
             questionsContainer.innerHTML = cat.questions.map((item) => `
                 <div class="accordion-item" onclick="toggleAccordion(this)">
                     <div class="accordion-header">
@@ -277,17 +284,13 @@
                 </div>
             `).join('');
 
-            // View Transition
             viewCategories.style.opacity = '0';
             viewCategories.style.transform = 'translateY(-20px)';
             
             setTimeout(() => {
                 viewCategories.classList.add('hidden');
                 viewQuestions.classList.remove('hidden');
-                
-                // Trigger reflow to restart animation
                 void viewQuestions.offsetWidth; 
-                
                 viewQuestions.style.opacity = '1';
                 viewQuestions.style.transform = 'translateY(0)';
             }, 300);
@@ -300,9 +303,7 @@
             setTimeout(() => {
                 viewQuestions.classList.add('hidden');
                 viewCategories.classList.remove('hidden');
-                
                 void viewCategories.offsetWidth;
-                
                 viewCategories.style.opacity = '1';
                 viewCategories.style.transform = 'translateY(0)';
             }, 300);
@@ -313,7 +314,6 @@
             const body = element.querySelector('.accordion-body');
             const isActive = element.classList.contains('active');
 
-            // Fechar todos os abertos antes de abrir o novo
             document.querySelectorAll('.accordion-item.active').forEach(item => {
                 item.classList.remove('active');
                 item.querySelector('.accordion-body').style.maxHeight = null;
@@ -328,31 +328,35 @@
         // MODAL LOGIC
         function toggleModal(show) {
             const modal = document.getElementById('contact-modal');
+            const formContent = document.getElementById('form-content');
+            const successMsg = document.getElementById('success-message');
+            
             if(show) {
+                // Ao abrir, garante que o formulário está visível e a mensagem de sucesso oculta
+                formContent.style.display = 'block';
+                successMsg.style.display = 'none';
                 modal.classList.add('active');
             } else {
                 modal.classList.remove('active');
             }
         }
 
-        // FORM SUBMIT AJAX (Envia para fluig@andra.com.br)
+        // FORM SUBMIT AJAX
         async function enviarDuvida(e) {
             e.preventDefault();
             
             const btn = document.getElementById('btn-enviar');
             const textoOriginal = btn.innerText;
             
-            // UX: Muda o texto do botão e desativa
-            btn.innerText = 'Enviando...';
+            btn.innerText = 'Enviando aguarde...';
             btn.disabled = true;
 
-            // Captura os dados do formulário
             const nome = document.getElementById('form-nome').value;
+            const telefone = document.getElementById('form-telefone').value; // Captura o telefone
             const email = document.getElementById('form-email').value;
             const duvida = document.getElementById('form-duvida').value;
 
             try {
-                // Requisição para a API do FormSubmit
                 const resposta = await fetch('https://formsubmit.co/ajax/fluig@andra.com.br', {
                     method: 'POST',
                     headers: { 
@@ -361,6 +365,7 @@
                     },
                     body: JSON.stringify({
                         Nome: nome,
+                        Telefone: telefone,
                         Email: email,
                         Mensagem: duvida,
                         _subject: `Nova Dúvida do FAQ - ${nome}`
@@ -368,16 +373,16 @@
                 });
 
                 if (resposta.ok) {
-                    alert("Mensagem enviada com sucesso! Nossa equipe entrará em contato em breve.");
-                    toggleModal(false);
-                    e.target.reset(); // Limpa o formulário
+                    // Esconde o formulário e mostra a mensagem de sucesso animada
+                    document.getElementById('form-content').style.display = 'none';
+                    document.getElementById('success-message').style.display = 'block';
+                    e.target.reset(); 
                 } else {
                     alert("Ocorreu um erro ao enviar a mensagem. Por favor, tente novamente mais tarde.");
                 }
             } catch (erro) {
                 alert("Erro de conexão. Verifique sua internet e tente novamente.");
             } finally {
-                // Restaura o botão ao estado original
                 btn.innerText = textoOriginal;
                 btn.disabled = false;
             }
