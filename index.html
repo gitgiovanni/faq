@@ -3,49 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Andra - Dúvidas Frequentes (FAQ)</title>
+    <title>Andra - Atendimento Inteligente</title>
     <link rel="icon" type="image/png" href="https://fluig.andra.com.br/volume/stream/Rmx1aWc=/P3Q9MSZ2b2w9RGVmYXVsdCZpZD04NTI3JnZlcj0xMDAwJmZpbGU9QU5EUkErJTI4MSUyOS5wbmcmY3JjPTE2OTA1NzMxMTQmc2l6ZT0wLjAzODc3NCZ1SWQ9MjgmZlNJZD0xJnVTSWQ9MSZkPWZhbHNlJnRrbj0mcHVibGljVXJsPXRydWUmYXR0YWNoPWZhbHNl.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         :root { 
             --andra-red: #c71d23; 
             --andra-dark-red: #a0171c; 
-            --gray-bg: #f4f6f9; 
-            --text-dark: #333; 
+            --gray-bg: #f8f9fa; 
+            --text-dark: #2b2b2b;
+            --text-light: #6c757d;
+            --white: #ffffff;
+            --shadow-sm: 0 4px 6px rgba(0,0,0,0.05);
+            --shadow-md: 0 10px 30px rgba(0,0,0,0.08);
+            --shadow-hover: 0 20px 40px rgba(199, 29, 35, 0.15);
+            --transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
         
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
-        body { background-color: var(--gray-bg); display: flex; flex-direction: column; min-height: 100vh; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', 'Helvetica Neue', sans-serif; }
+        body { background-color: var(--gray-bg); display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; }
         
-        .site-header { background-color: var(--andra-dark-red); padding: 12px 0; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        /* HEADER */
+        .site-header { background-color: var(--andra-dark-red); padding: 15px 0; box-shadow: var(--shadow-md); position: sticky; top: 0; z-index: 100; }
         .header-container { max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; align-items: center; justify-content: space-between; }
-        .header-logo { max-height: 48px; }
-        .header-title { color: #fff; font-size: 16px; font-weight: bold; border-left: 1px solid rgba(255, 255, 255, 0.3); padding-left: 20px; }
+        .header-logo { max-height: 45px; }
+        .header-title { color: var(--white); font-size: 18px; font-weight: 600; letter-spacing: 0.5px; border-left: 2px solid rgba(255, 255, 255, 0.2); padding-left: 20px; }
         
-        .main-content { flex: 1; display: flex; align-items: flex-start; justify-content: center; padding: 40px 20px; }
+        /* MAIN CONTAINER */
+        .main-content { flex: 1; width: 100%; max-width: 1000px; margin: 0 auto; padding: 60px 20px; position: relative; }
         
-        .card-faq { width: 100%; max-width: 900px; background: #fff; border-radius: 8px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); padding: 40px; }
-        .card-faq h2 { text-align: center; font-size: 26px; color: var(--andra-dark-red); margin-bottom: 8px; }
-        .card-faq p.subtitle { text-align: center; color: #777; font-size: 15px; margin-bottom: 35px; }
+        .page-header { text-align: center; margin-bottom: 50px; animation: fadeInDown 0.8s ease forwards; }
+        .page-header h1 { font-size: 36px; color: var(--andra-dark-red); margin-bottom: 10px; font-weight: 800; }
+        .page-header p { color: var(--text-light); font-size: 16px; max-width: 600px; margin: 0 auto; }
 
-        .category-title { color: var(--andra-dark-red); font-size: 20px; margin: 35px 0 15px; padding-bottom: 5px; border-bottom: 2px solid var(--andra-red); }
-        .category-title:first-of-type { margin-top: 0; }
+        /* VIEWS (Categories vs Questions) */
+        .view-section { transition: var(--transition); opacity: 1; transform: translateY(0); }
+        .view-section.hidden { opacity: 0; transform: translateY(20px); pointer-events: none; position: absolute; visibility: hidden; }
 
-        .faq-item { margin-bottom: 12px; border: 1px solid #ddd; border-radius: 6px; overflow: hidden; background-color: #fff; }
+        /* CATEGORY GRID */
+        .category-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; }
         
-        .faq-summary { font-weight: bold; padding: 16px 20px; background-color: #fafafa; cursor: pointer; display: flex; align-items: center; justify-content: space-between; color: var(--text-dark); font-size: 15px; transition: background 0.3s ease; list-style: none; }
-        .faq-summary::-webkit-details-marker { display: none; }
-        .faq-summary:hover { background-color: #f0f0f0; color: var(--andra-red); }
+        .cat-card { background: var(--white); border-radius: 16px; padding: 40px 30px; text-align: center; cursor: pointer; box-shadow: var(--shadow-sm); transition: var(--transition); border: 1px solid rgba(0,0,0,0.03); position: relative; overflow: hidden; }
+        .cat-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: var(--andra-red); transform: scaleX(0); transition: var(--transition); transform-origin: left; }
+        .cat-card:hover { transform: translateY(-10px); box-shadow: var(--shadow-hover); }
+        .cat-card:hover::before { transform: scaleX(1); }
         
-        .faq-summary::after { content: '\f078'; font-family: 'Font Awesome 6 Free'; font-weight: 900; transition: transform 0.3s ease; color: var(--andra-red); }
-        details[open] .faq-summary::after { transform: rotate(180deg); }
-        details[open] .faq-summary { border-bottom: 1px solid #ddd; color: var(--andra-red); }
+        .cat-icon { font-size: 40px; color: var(--andra-red); margin-bottom: 20px; transition: var(--transition); }
+        .cat-card:hover .cat-icon { transform: scale(1.1); }
+        .cat-title { font-size: 20px; color: var(--text-dark); font-weight: 700; margin-bottom: 10px; }
+        .cat-desc { font-size: 14px; color: var(--text-light); line-height: 1.5; }
 
-        .faq-content { padding: 20px; line-height: 1.6; color: #555; font-size: 14px; background: #fff; }
-        .faq-content ul { padding-left: 20px; margin-top: 10px; margin-bottom: 15px; }
-        .faq-content li { margin-bottom: 6px; }
-        .faq-content p { margin-bottom: 10px; }
-        .faq-content strong { color: var(--text-dark); }
+        /* QUESTIONS LIST (Child View) */
+        .back-btn { display: inline-flex; align-items: center; gap: 8px; color: var(--text-light); font-weight: 600; cursor: pointer; margin-bottom: 30px; padding: 10px 20px; background: var(--white); border-radius: 50px; box-shadow: var(--shadow-sm); transition: var(--transition); border: none; font-size: 14px; }
+        .back-btn:hover { color: var(--andra-red); box-shadow: var(--shadow-md); transform: translateX(-5px); }
+
+        .active-cat-title { font-size: 28px; color: var(--andra-dark-red); margin-bottom: 30px; display: flex; align-items: center; gap: 15px; }
+
+        .accordion-item { background: var(--white); border-radius: 12px; margin-bottom: 15px; box-shadow: var(--shadow-sm); overflow: hidden; transition: var(--transition); border: 1px solid transparent; }
+        .accordion-item.active { border-color: rgba(199, 29, 35, 0.3); box-shadow: var(--shadow-md); }
+        
+        .accordion-header { padding: 25px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 600; color: var(--text-dark); font-size: 16px; transition: var(--transition); }
+        .accordion-header:hover { color: var(--andra-red); }
+        .accordion-icon { width: 30px; height: 30px; border-radius: 50%; background: var(--gray-bg); display: flex; align-items: center; justify-content: center; color: var(--andra-red); transition: var(--transition); }
+        .accordion-item.active .accordion-icon { transform: rotate(180deg); background: var(--andra-red); color: var(--white); }
+        
+        .accordion-body { max-height: 0; overflow: hidden; transition: max-height 0.5s cubic-bezier(0.25, 0.8, 0.25, 1); }
+        .accordion-content { padding: 0 25px 25px 25px; color: #555; line-height: 1.7; font-size: 15px; }
+        .accordion-content ul { padding-left: 20px; margin: 15px 0; }
+        .accordion-content li { margin-bottom: 8px; }
+        .accordion-content strong { color: var(--text-dark); }
+
+        /* FLOATING ACTION BUTTON & MODAL */
+        .fab-container { position: fixed; bottom: 40px; right: 40px; z-index: 90; }
+        .fab-btn { background: var(--andra-red); color: var(--white); border: none; padding: 16px 28px; border-radius: 50px; font-size: 16px; font-weight: 600; cursor: pointer; box-shadow: 0 10px 25px rgba(199, 29, 35, 0.4); display: flex; align-items: center; gap: 10px; transition: var(--transition); animation: pulse 2s infinite; }
+        .fab-btn:hover { background: var(--andra-dark-red); transform: translateY(-5px) scale(1.05); animation: none; }
+
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); backdrop-filter: blur(8px); z-index: 200; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: var(--transition); }
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+        
+        .modal-box { background: var(--white); width: 100%; max-width: 500px; border-radius: 20px; padding: 40px; box-shadow: 0 25px 50px rgba(0,0,0,0.2); transform: translateY(30px) scale(0.95); transition: var(--transition); position: relative; }
+        .modal-overlay.active .modal-box { transform: translateY(0) scale(1); }
+        
+        .close-modal { position: absolute; top: 20px; right: 20px; background: none; border: none; font-size: 24px; color: #aaa; cursor: pointer; transition: 0.2s; }
+        .close-modal:hover { color: var(--andra-red); transform: rotate(90deg); }
+
+        .modal-box h3 { font-size: 24px; color: var(--andra-dark-red); margin-bottom: 10px; }
+        .modal-box p { color: var(--text-light); font-size: 14px; margin-bottom: 25px; }
+        
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-size: 13px; font-weight: 600; color: var(--text-dark); margin-bottom: 8px; }
+        .form-group input, .form-group textarea { width: 100%; padding: 14px; border: 1px solid #ddd; border-radius: 10px; font-size: 15px; transition: 0.3s; background: var(--gray-bg); font-family: inherit; }
+        .form-group input:focus, .form-group textarea:focus { outline: none; border-color: var(--andra-red); background: var(--white); box-shadow: 0 0 0 3px rgba(199, 29, 35, 0.1); }
+        
+        .btn-submit { width: 100%; background: var(--andra-red); color: var(--white); padding: 16px; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .btn-submit:hover { background: var(--andra-dark-red); }
+
+        /* ANIMATIONS */
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(199, 29, 35, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(199, 29, 35, 0); } 100% { box-shadow: 0 0 0 0 rgba(199, 29, 35, 0); } }
+        
+        .hidden-content { display: none; }
     </style>
 </head>
 <body>
@@ -53,163 +110,219 @@
     <header class="site-header">
         <div class="header-container">
             <img src="https://fluig.andra.com.br/volume/stream/Rmx1aWc=/P3Q9MSZ2b2w9RGVmYXVsdCZpZD04NTI3JnZlcj0xMDAwJmZpbGU9QU5EUkErJTI4MSUyOS5wbmcmY3JjPTE2OTA1NzMxMTQmc2l6ZT0wLjAzODc3NCZ1SWQ9MjgmZlNJZD0xJnVTSWQ9MSZkPWZhbHNlJnRrbj0mcHVibGljVXJsPXRydWUmYXR0YWNoPWZhbHNl.png" alt="Logo Andra" class="header-logo">
-            <span class="header-title">Central de Atendimento</span>
+            <span class="header-title">Atendimento ao Cliente</span>
         </div>
     </header>
 
     <main class="main-content">
-        <div class="card-faq">
-            <h2>Dúvidas Frequentes (FAQ)</h2>
-            <p class="subtitle">Encontre respostas rápidas para as principais dúvidas sobre nossa loja.</p>
+        <div class="page-header">
+            <h1>Como podemos te ajudar?</h1>
+            <p>Selecione uma categoria abaixo para encontrar respostas rápidas sobre nossos processos e serviços.</p>
+        </div>
 
-            <h3 class="category-title"><i class="fa-solid fa-truck-fast"></i> Prazos e Entregas</h3>
+        <div id="view-categories" class="view-section">
+            <div class="category-grid">
+                <div class="cat-card" onclick="openCategory('entrega')">
+                    <i class="fa-solid fa-truck-fast cat-icon"></i>
+                    <h3 class="cat-title">Prazos e Entregas</h3>
+                    <p class="cat-desc">Rastreio, frete grátis, agendamento e transportadoras.</p>
+                </div>
+                <div class="cat-card" onclick="openCategory('troca')">
+                    <i class="fa-solid fa-box-open cat-icon"></i>
+                    <h3 class="cat-title">Trocas e Devoluções</h3>
+                    <p class="cat-desc">Prazos, condições e documentos necessários para devolução.</p>
+                </div>
+                <div class="cat-card" onclick="openCategory('pagamento')">
+                    <i class="fa-solid fa-credit-card cat-icon"></i>
+                    <h3 class="cat-title">Pagamentos</h3>
+                    <p class="cat-desc">Cartões, parcelamento, aprovação de boleto e PIX.</p>
+                </div>
+                <div class="cat-card" onclick="openCategory('empresa')">
+                    <i class="fa-solid fa-building cat-icon"></i>
+                    <h3 class="cat-title">Sobre a ANDRA</h3>
+                    <p class="cat-desc">Nossa história, unidades, privacidade e responsabilidade social.</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="view-questions" class="view-section hidden">
+            <button class="back-btn" onclick="goBack()">
+                <i class="fa-solid fa-arrow-left"></i> Voltar às Categorias
+            </button>
             
-            <details class="faq-item">
-                <summary class="faq-summary">Quais são as formas de envio disponíveis?</summary>
-                <div class="faq-content"><p>Entregamos em todo o território nacional por transportadoras contratadas, Correios (SEDEX e PAC), frota própria da ANDRA e motoboys. Você pode consultar as opções disponíveis para o seu CEP na página do produto ou no carrinho.</p></div>
-            </details>
-            
-            <details class="faq-item">
-                <summary class="faq-summary">A partir de quando começa a contar o meu prazo de entrega?</summary>
-                <div class="faq-content"><p>O prazo de entrega do pedido só passa a ser considerado a partir da <strong>aprovação do pagamento</strong> pela instituição financeira, e não no momento da inclusão do pedido.</p></div>
-            </details>
+            <h2 id="active-category-title" class="active-cat-title">
+                <i id="active-category-icon" class="fa-solid fa-circle-info"></i> 
+                <span>Categoria</span>
+            </h2>
 
-            <details class="faq-item">
-                <summary class="faq-summary">Como funciona a promoção de Frete Grátis?</summary>
-                <div class="faq-content"><p>Oferecemos FRETE GRÁTIS exclusivamente para compras <strong>acima de R$500,00</strong> com entrega destinada à cidade de <strong>São Paulo - SP</strong>.</p></div>
-            </details>
-
-            <details class="faq-item">
-                <summary class="faq-summary">Posso agendar a data e o horário da entrega?</summary>
-                <div class="faq-content"><p>Não é possível agendar horário e data exata para as entregas. Por isso, é importante ter alguém no local para o recebimento.</p></div>
-            </details>
-
-            <details class="faq-item">
-                <summary class="faq-summary">Outra pessoa pode receber o meu pedido?</summary>
-                <div class="faq-content"><p>Sim! O recebimento do produto pode ser realizado por terceiros (como porteiros, familiares ou recepcionistas), desde que tenham idade igual ou superior a 18 anos e assinem o comprovante de recebimento da mercadoria.</p></div>
-            </details>
-
-            <details class="faq-item">
-                <summary class="faq-summary">O que acontece se os Correios/Transportadora não me encontrarem?</summary>
-                <div class="faq-content"><p>São realizadas três tentativas de entrega em três dias consecutivos. Caso as tentativas não obtenham sucesso, a compra será devolvida para o nosso Centro de Distribuição. Entraremos em contato notificando a devolução e será estabelecido um novo prazo de entrega ou o estorno da compra.</p></div>
-            </details>
-
-            <details class="faq-item">
-                <summary class="faq-summary">O que pode causar o atraso da minha entrega?</summary>
-                <div class="faq-content"><p>Situações excepcionais podem causar atrasos, como a indicação de um endereço errado/incompleto, ou fatores de força maior como eventos naturais (chuvas, enchentes) e humanos (greves, manifestações, acidentes). Nesses casos, a ANDRA fará o possível para manter você informado.</p></div>
-            </details>
-
-            <h3 class="category-title"><i class="fa-solid fa-box-open"></i> Trocas e Devoluções</h3>
-
-            <details class="faq-item">
-                <summary class="faq-summary">Qual o prazo para solicitar uma troca ou devolução?</summary>
-                <div class="faq-content"><p>Você pode solicitar a troca ou devolução em até <strong>7 (sete) dias</strong> após a compra/recebimento do produto.</p></div>
-            </details>
-
-            <details class="faq-item">
-                <summary class="faq-summary">Quais são as condições para que o produto seja aceito na devolução?</summary>
-                <div class="faq-content">
-                    <p>Para que a devolução seja aceita (mediante análise prévia do nosso Departamento Comercial), o produto deve estar:</p>
-                    <ul>
-                        <li>Sem violação de embalagem;</li>
-                        <li>Sem sinais de uso;</li>
-                        <li>Acompanhado do cupom fiscal ou nota fiscal de devolução.</li>
-                    </ul>
+            <div id="questions-container">
                 </div>
-            </details>
-
-            <details class="faq-item">
-                <summary class="faq-summary">Quais documentos preciso apresentar para devolver um produto?</summary>
-                <div class="faq-content">
-                    <ul>
-                        <li><strong>Pessoa Física:</strong> Cupom Fiscal, documento de Identidade e CPF;</li>
-                        <li><strong>Pessoa Jurídica com Inscrição Estadual:</strong> Nota Fiscal de devolução;</li>
-                        <li><strong>Pessoa Jurídica não contribuinte do ICMS:</strong> Carta de devolução em papel timbrado da empresa, assinada e com carimbo de CNPJ.</li>
-                    </ul>
-                </div>
-            </details>
-
-            <details class="faq-item">
-                <summary class="faq-summary">Posso trocar cabos comprados em lance?</summary>
-                <div class="faq-content"><p>Não. Não aceitamos devoluções ou trocas de cabos adquiridos em lance.</p></div>
-            </details>
-
-            <h3 class="category-title"><i class="fa-solid fa-credit-card"></i> Formas de Pagamento</h3>
-
-            <details class="faq-item">
-                <summary class="faq-summary">Quais são as formas de pagamento aceitas?</summary>
-                <div class="faq-content"><p>Aceitamos cartões de crédito (Mastercard, Visa, Elo, American Express), além de Boleto Bancário e PIX.</p></div>
-            </details>
-
-            <details class="faq-item">
-                <summary class="faq-summary">Posso parcelar a minha compra?</summary>
-                <div class="faq-content"><p>Sim! Parcelamos a sua compra no cartão de crédito em até <strong>6x sem juros</strong>. A parcela mínima para parcelamento deve ser superior a R$ 75,00.</p></div>
-            </details>
-
-            <details class="faq-item">
-                <summary class="faq-summary">Quanto tempo demora para o boleto ser aprovado?</summary>
-                <div class="faq-content"><p>No caso de boleto bancário, a aprovação do pagamento poderá levar <strong>até 72 horas</strong> para ser processada pelo sistema bancário.</p></div>
-            </details>
-
-            <details class="faq-item">
-                <summary class="faq-summary">Tenho pressa no envio. Qual a melhor forma de pagamento?</summary>
-                <div class="faq-content"><p>Se você precisa de aprovação rápida, recomendamos utilizar o <strong>PIX</strong> ou <strong>Cartão de Crédito</strong>, pois a compensação costuma ser imediata.</p></div>
-            </details>
-
-            <h3 class="category-title"><i class="fa-solid fa-shield-halved"></i> Privacidade e Segurança</h3>
-
-            <details class="faq-item">
-                <summary class="faq-summary">Meus dados estão seguros com a ANDRA?</summary>
-                <div class="faq-content"><p>Sim. Todas as informações pessoais coletadas são tratadas em concordância com a Lei da Proteção de Dados Pessoais (LGPD). Nossos sistemas são alocados em servidores seguros, garantindo que suas informações não serão acessadas por pessoas não autorizadas. Não compartilhamos informações com terceiros sem consentimento prévio.</p></div>
-            </details>
-
-            <details class="faq-item">
-                <summary class="faq-summary">Por quanto tempo meus dados ficam salvos no site?</summary>
-                <div class="faq-content"><p>Ao preencher formulários, você pode optar por salvar seus dados (nome, e-mail, telefone) em cookies no navegador, que ficam armazenados por um ano para seu conforto. Se você deixar comentários, eles e seus metadados são conservados indefinidamente. Dados de usuários registrados ficam no perfil e podem ser editados ou excluídos a qualquer momento.</p></div>
-            </details>
-
-            <details class="faq-item">
-                <summary class="faq-summary">Posso solicitar a exclusão dos meus dados?</summary>
-                <div class="faq-content"><p>Sim, você pode solicitar um arquivo dos seus dados pessoais ou pedir que removamos qualquer dado pessoal que mantemos sobre você. A única exceção são os dados que somos obrigados a manter para propósitos administrativos, legais ou de segurança.</p></div>
-            </details>
-
-            <h3 class="category-title"><i class="fa-solid fa-building"></i> Sobre a ANDRA e Responsabilidade Social</h3>
-
-            <details class="faq-item">
-                <summary class="faq-summary">Há quanto tempo a ANDRA está no mercado?</summary>
-                <div class="faq-content"><p>Iniciamos nossas atividades em <strong>1976</strong>. Com quase 50 anos de mercado, a ANDRA S.A. Electric Solutions é hoje referência na comercialização e distribuição de materiais elétricos e iluminação no Brasil.</p></div>
-            </details>
-
-            <details class="faq-item">
-                <summary class="faq-summary">Onde as lojas e unidades da ANDRA estão localizadas?</summary>
-                <div class="faq-content"><p>Estamos presentes nas regiões Sul, Sudeste e Centro-Oeste. Nossas unidades estão distribuídas em São Paulo, Santos, São José dos Campos, Sorocaba, Osasco, Caieiras, Campinas, Cajamar, Guarulhos, Curitiba, Maringá, Joinville, Cascavel, Belo Horizonte, Goiânia, Itajaí e Serra.</p></div>
-            </details>
-
-            <details class="faq-item">
-                <summary class="faq-summary">Quais empresas compõem o Grupo ANDRA?</summary>
-                <div class="faq-content"><p>O Grupo ANDRA é formado por diversas frentes integradas no setor elétrico e de engenharia: ANDRA Materiais Elétricos, AYLA Iluminação, ANDRA Engenharia e FECVA Materiais Elétricos Industriais.</p></div>
-            </details>
-
-            <details class="faq-item">
-                <summary class="faq-summary">Que tipos de projetos e mercados a ANDRA atende?</summary>
-                <div class="faq-content"><p>Com um catálogo de mais de 75 mil itens, oferecemos soluções para os mercados industrial, comercial e residencial. Contamos também com setores dedicados a projetos de Eficiência Energética, Gestão de Contratos, Automação, Projetos de CFTV e Montagem de Painéis Elétricos.</p></div>
-            </details>
-
-            <details class="faq-item">
-                <summary class="faq-summary">Quais são as ações de Responsabilidade Social da ANDRA?</summary>
-                <div class="faq-content">
-                    <p>Mantemos parcerias fundamentais com diversas instituições, pois acreditamos que o sucesso empresarial deve ser acompanhado por contribuições positivas à sociedade. Atuamos em quatro frentes principais:</p>
-                    <ul>
-                        <li><strong>Saúde:</strong> Apoio ao Hospital Infantil Pequeno Príncipe, APAE Guarulhos, Projeto CEEB, LEMDA, Projeto Saúde Integral III e Hospital de Amor;</li>
-                        <li><strong>Apoio a Idosos:</strong> Colaboração com o Instituto Hospital de Amor e Projeto Amparo ao Idoso;</li>
-                        <li><strong>Esporte:</strong> Apoio ao Projeto Bola Dentro e Associação HURRA;</li>
-                        <li><strong>Cultura:</strong> Parceria com o Instituto Bairro da Juventude dos Padres Rogacionistas e o Projeto Geração de Talentos Fase 3.</li>
-                    </ul>
-                </div>
-            </details>
-
         </div>
     </main>
 
+    <div class="fab-container">
+        <button class="fab-btn" onclick="toggleModal(true)">
+            <i class="fa-regular fa-envelope"></i> Ainda tenho dúvidas
+        </button>
+    </div>
+
+    <div class="modal-overlay" id="contact-modal">
+        <div class="modal-box">
+            <button class="close-modal" onclick="toggleModal(false)"><i class="fa-solid fa-xmark"></i></button>
+            <h3>Fale Conosco</h3>
+            <p>Preencha os dados abaixo e nossa equipe entrará em contato em breve.</p>
+            
+            <form id="duvida-form" onsubmit="enviarDuvida(event)">
+                <div class="form-group">
+                    <label>Nome Completo</label>
+                    <input type="text" required placeholder="Digite seu nome">
+                </div>
+                <div class="form-group">
+                    <label>E-mail</label>
+                    <input type="email" required placeholder="seu@email.com.br">
+                </div>
+                <div class="form-group">
+                    <label>Sua Dúvida</label>
+                    <textarea rows="4" required placeholder="Escreva como podemos te ajudar..."></textarea>
+                </div>
+                <button type="submit" class="btn-submit">Enviar Mensagem</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const faqData = {
+            'entrega': {
+                title: 'Prazos e Entregas',
+                icon: 'fa-truck-fast',
+                questions: [
+                    { q: "Quais são as formas de envio disponíveis?", a: "Entregamos em todo o território nacional por transportadoras contratadas, Correios (SEDEX e PAC), frota própria da ANDRA e motoboys. Você pode consultar as opções disponíveis para o seu CEP na página do produto ou no carrinho." },
+                    { q: "A partir de quando começa a contar o meu prazo de entrega?", a: "O prazo de entrega do pedido só passa a ser considerado a partir da <strong>aprovação do pagamento</strong> pela instituição financeira, e não no momento da inclusão do pedido." },
+                    { q: "Como funciona a promoção de Frete Grátis?", a: "Oferecemos FRETE GRÁTIS exclusivamente para compras <strong>acima de R$500,00</strong> com entrega destinada à cidade de <strong>São Paulo - SP</strong>." },
+                    { q: "O que pode causar o atraso da minha entrega?", a: "Situações excepcionais como endereço errado/incompleto, ou fatores de força maior como eventos naturais (chuvas, enchentes) e humanos (greves, acidentes). Nesses casos, a ANDRA fará o possível para manter você informado." }
+                ]
+            },
+            'troca': {
+                title: 'Trocas e Devoluções',
+                icon: 'fa-box-open',
+                questions: [
+                    { q: "Qual o prazo para solicitar uma troca ou devolução?", a: "Você pode solicitar a troca ou devolução em até <strong>7 (sete) dias</strong> após a compra/recebimento do produto." },
+                    { q: "Quais são as condições para que o produto seja aceito?", a: "O produto deve estar sem violação de embalagem, sem sinais de uso e acompanhado do cupom fiscal ou nota fiscal de devolução, mediante análise do Departamento Comercial." },
+                    { q: "Quais documentos preciso apresentar?", a: "<ul><li><strong>Pessoa Física:</strong> Cupom Fiscal, RG e CPF;</li><li><strong>PJ com IE:</strong> Nota Fiscal de devolução;</li><li><strong>PJ isento:</strong> Carta de devolução em papel timbrado.</li></ul>" },
+                    { q: "Posso trocar cabos comprados em lance?", a: "Não. Não aceitamos devoluções ou trocas de cabos adquiridos em lance." }
+                ]
+            },
+            'pagamento': {
+                title: 'Formas de Pagamento',
+                icon: 'fa-credit-card',
+                questions: [
+                    { q: "Quais são as formas de pagamento aceitas?", a: "Aceitamos cartões de crédito (Mastercard, Visa, Elo, American Express), Boleto Bancário e PIX." },
+                    { q: "Posso parcelar a minha compra?", a: "Sim! Parcelamos a sua compra no cartão de crédito em até <strong>6x sem juros</strong>. A parcela mínima deve ser superior a R$ 75,00." },
+                    { q: "Quanto tempo demora para o boleto ser aprovado?", a: "A aprovação do pagamento poderá levar <strong>até 72 horas úteis</strong> pelo sistema bancário." }
+                ]
+            },
+            'empresa': {
+                title: 'Sobre a ANDRA',
+                icon: 'fa-building',
+                questions: [
+                    { q: "Há quanto tempo a ANDRA está no mercado?", a: "Iniciamos nossas atividades em <strong>1976</strong>. Com quase 50 anos de mercado, somos hoje referência na comercialização e distribuição de materiais elétricos e iluminação no Brasil." },
+                    { q: "Quais são as ações de Responsabilidade Social da ANDRA?", a: "Atuamos fortemente na Saúde (Hospital Pequeno Príncipe, APAE, Hospital de Amor), Apoio a Idosos (Amparo ao Idoso), Esportes (Projeto Bola Dentro) e Cultura (Instituto Bairro da Juventude)." },
+                    { q: "Meus dados estão seguros?", a: "Sim. Todas as informações são tratadas em concordância com a Lei da Proteção de Dados Pessoais (LGPD), alocadas em servidores seguros e sem compartilhamento não autorizado." }
+                ]
+            }
+        };
+
+        // NAVIGATION LOGIC
+        const viewCategories = document.getElementById('view-categories');
+        const viewQuestions = document.getElementById('view-questions');
+        const questionsContainer = document.getElementById('questions-container');
+
+        function openCategory(catKey) {
+            const cat = faqData[catKey];
+            
+            // Set Titles and Icons
+            document.querySelector('#active-category-title span').innerText = cat.title;
+            document.getElementById('active-category-icon').className = `fa-solid ${cat.icon}`;
+            
+            // Generate HTML for questions
+            questionsContainer.innerHTML = cat.questions.map((item, index) => `
+                <div class="accordion-item" onclick="toggleAccordion(this)">
+                    <div class="accordion-header">
+                        <span>${item.q}</span>
+                        <div class="accordion-icon"><i class="fa-solid fa-chevron-down"></i></div>
+                    </div>
+                    <div class="accordion-body">
+                        <div class="accordion-content">${item.a}</div>
+                    </div>
+                </div>
+            `).join('');
+
+            // View Transition
+            viewCategories.style.opacity = '0';
+            viewCategories.style.transform = 'translateY(-20px)';
+            
+            setTimeout(() => {
+                viewCategories.classList.add('hidden');
+                viewQuestions.classList.remove('hidden');
+                
+                // Trigger reflow to restart animation
+                void viewQuestions.offsetWidth; 
+                
+                viewQuestions.style.opacity = '1';
+                viewQuestions.style.transform = 'translateY(0)';
+            }, 300);
+        }
+
+        function goBack() {
+            viewQuestions.style.opacity = '0';
+            viewQuestions.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                viewQuestions.classList.add('hidden');
+                viewCategories.classList.remove('hidden');
+                
+                void viewCategories.offsetWidth;
+                
+                viewCategories.style.opacity = '1';
+                viewCategories.style.transform = 'translateY(0)';
+            }, 300);
+        }
+
+        // ACCORDION LOGIC
+        function toggleAccordion(element) {
+            const body = element.querySelector('.accordion-body');
+            const isActive = element.classList.contains('active');
+
+            // Fechar todos os abertos antes de abrir o novo (Opcional, mas melhora UX)
+            document.querySelectorAll('.accordion-item.active').forEach(item => {
+                item.classList.remove('active');
+                item.querySelector('.accordion-body').style.maxHeight = null;
+            });
+
+            if (!isActive) {
+                element.classList.add('active');
+                body.style.maxHeight = body.scrollHeight + "px";
+            }
+        }
+
+        // MODAL LOGIC
+        function toggleModal(show) {
+            const modal = document.getElementById('contact-modal');
+            if(show) {
+                modal.classList.add('active');
+            } else {
+                modal.classList.remove('active');
+            }
+        }
+
+        // FORM SUBMIT PLACEHOLDER
+        function enviarDuvida(e) {
+            e.preventDefault();
+            // Aqui futuramente entrará a integração com API/E-mail
+            alert("Mensagem recebida! (Esta é uma simulação, a integração de e-mail será feita futuramente).");
+            toggleModal(false);
+            e.target.reset();
+        }
+    </script>
 </body>
 </html>
